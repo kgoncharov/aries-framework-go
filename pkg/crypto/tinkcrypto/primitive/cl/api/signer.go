@@ -12,10 +12,7 @@ import (
 
 // Signer is the signing interface primitive for CL signatures used by Tink.
 type Signer interface {
-	// Sign will create a CL signature
-	// returns:
-	// 		signature in []byte
-	//		error in case of errors
+	// Sign will create a CL signature by the Issuer
 	Sign(values map[string]interface{},
 		blindedCredentialSecrets *ursa.BlindedCredentialSecrets,
 		credentialNonce *ursa.Nonce) (*ursa.CredentialSignature, *ursa.CredentialSignatureCorrectnessProof, *ursa.Nonce, error)

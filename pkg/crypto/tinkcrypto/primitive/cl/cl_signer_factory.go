@@ -16,7 +16,7 @@ func NewSigner(h *keyset.Handle) (clapi.Signer, error) {
 	return NewSignerWithKeyManager(h, nil)
 }
 
-// NewSignerWithKeyManager returns a BBS Signer primitive from the given keyset handle and custom key manager.
+// NewSignerWithKeyManager returns a CL Signer primitive from the given keyset handle and custom key manager.
 func NewSignerWithKeyManager(h *keyset.Handle, km registry.KeyManager) (clapi.Signer, error) {
 	ps, err := h.PrimitivesWithKeyManager(km)
 	if err != nil {
@@ -26,12 +26,12 @@ func NewSignerWithKeyManager(h *keyset.Handle, km registry.KeyManager) (clapi.Si
 	return newWrappedSigner(ps)
 }
 
-// wrappedSigner is a BBS Signer implementation that uses the underlying primitive set for bbs signing.
+// wrappedSigner is a CL Signer implementation that uses the underlying primitive set for bbs signing.
 type wrappedSigner struct {
 	ps *primitiveset.PrimitiveSet
 }
 
-// newWrappedSigner constructor creates a new wrappedSigner and checks primitives in ps are all of BBS Signer type.
+// newWrappedSigner constructor creates a new wrappedSigner and checks primitives in ps are all of CL Signer type.
 func newWrappedSigner(ps *primitiveset.PrimitiveSet) (*wrappedSigner, error) {
 	if _, ok := (ps.Primary.Primitive).(clapi.Signer); !ok {
 		return nil, fmt.Errorf("cl_signer_factory: not a CL Signer primitive")

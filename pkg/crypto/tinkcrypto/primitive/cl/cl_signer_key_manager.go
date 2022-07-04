@@ -19,15 +19,16 @@ const (
 
 // common errors.
 var (
-	errInvalidCLSignerKey       = errors.New("cl_signer_key_manager: invalid key")
-	errInvalidCLSignerKeyFormat = errors.New("cl_signer_key_manager: invalid key format")
+	errInvalidCLSignerKey       = errors.New("cl_signer_key_manager: invalid cred def key")
+	errInvalidCLSignerKeyFormat = errors.New("cl_signer_key_manager: invalid cred def key format")
+	errInvalidKeyUrsa           = errors.New("cl_signer_key_manager: can not create Ursa cred def key")
 )
 
 // clSignerKeyManager is an implementation of KeyManager interface for CL signatures/proofs.
 // It generates new CredDefPrivateKeys and produces new instances of CLSign subtle.
 type clSignerKeyManager struct{}
 
-// newBBSSignerKeyManager creates a new bbsSignerKeyManager.
+// Сreates a new clSignerKeyManager.
 func newCLSignerKeyManager() *clSignerKeyManager {
 	return new(clSignerKeyManager)
 }
@@ -78,51 +79,51 @@ func (km *clSignerKeyManager) NewKey(serializedKeyFormat []byte) (proto.Message,
 	// 2. Create Credentials Schema
 	schemaBuilder, err := ursa.NewCredentialSchemaBuilder()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(errInvalidKeyUrsa.Error()+": %w", err)
 	}
 	for _, field := range keyFormat.Params.Attrs {
 		err = schemaBuilder.AddAttr(field)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf(errInvalidKeyUrsa.Error()+": %w", err)
 		}
 	}
 	schema, err := schemaBuilder.Finalize()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(errInvalidKeyUrsa.Error()+": %w", err)
 	}
 
 	// 3. Create nonCredentials Schema (for master secret)
 	nonSchemaBuilder, err := ursa.NewNonCredentialSchemaBuilder()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(errInvalidKeyUrsa.Error()+": %w", err)
 	}
 	err = nonSchemaBuilder.AddAttr("master_secret")
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(errInvalidKeyUrsa.Error()+": %w", err)
 	}
 	nonSchema, err := nonSchemaBuilder.Finalize()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(errInvalidKeyUrsa.Error()+": %w", err)
 	}
 
 	// 4. Create CredDef
 	credDef, err := ursa.NewCredentialDef(schema, nonSchema, false)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(errInvalidKeyUrsa.Error()+": %w", err)
 	}
 
 	// 5. serialize keys to JSONs
 	pubKeyBytes, err := credDef.PubKey.ToJSON()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(errInvalidKeyUrsa.Error()+": can not convert cred def pub key to JSON: %w", err)
 	}
 	privKeyBytes, err := credDef.PrivKey.ToJSON()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(errInvalidKeyUrsa.Error()+": can not convert cred def priv key to JSON: %w", err)
 	}
 	correctnessProofBytes, err := credDef.KeyCorrectnessProof.ToJSON()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(errInvalidKeyUrsa.Error()+": can not convert cred def correctness proof to JSON: %w", err)
 	}
 
 	return &clpb.CLCredDefPrivateKey{
