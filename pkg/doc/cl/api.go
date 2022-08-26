@@ -44,10 +44,9 @@ type Prover interface {
 		credDef *CredentialDefinition, proverID string) (*CredentialRequest, error)
 	// ProcessCredential updates issued Credential signature for CredDef, using blinding factor from a CredRequest
 	// returns:
-	// 		credential as *Credential
 	//		error in case of errors
 	ProcessCredential(credential *Credential, credRequest *CredentialRequest,
-		credDef *CredentialDefinition) (*Credential, error)
+		credDef *CredentialDefinition) error
 	// CreateProof composes Proof for the provided Credentials for CredDefs
 	// matching revealead attrs and predicates specified in PresentationRequest
 	// returns:
