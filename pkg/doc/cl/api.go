@@ -69,6 +69,15 @@ type Verifier interface {
 	VerifyProof(proof *Proof, presentationRequest *PresentationRequest, credDefs []*CredentialDefinition) error
 }
 
+// CredDefResolver is a common interface for resolving Credential Definition.
+type CredDefResolver interface {
+	// Resolve trying to fetch Credential Definition with given CredDefID
+	// returns:
+	// 		credDef as *CredentialDefinition
+	//		error in case of errors
+	Resolve(id string) (*CredentialDefinition, error)
+}
+
 // Provider for CL services constructors.
 type Provider interface {
 	KMS() kms.KeyManager

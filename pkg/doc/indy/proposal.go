@@ -1,5 +1,5 @@
 /*
-Copyright SecureKey Technologies Inc. All Rights Reserved.
+Copyright Avast Software. All Rights Reserved.
 
 SPDX-License-Identifier: Apache-2.0
 */
@@ -7,26 +7,27 @@ SPDX-License-Identifier: Apache-2.0
 package indy
 
 import (
-	"fmt"
 	"encoding/json"
+	"fmt"
 )
 
 type rawProposal struct {
-	SchemaIssuerDid string `json:"schema_issuer_did,omitempty"`
+	SchemaIssuerDID string `json:"schema_issuer_did,omitempty"`
 	SchemaName      string `json:"schema_name,omitempty"`
 	SchemaVersion   string `json:"schema_version,omitempty"`
-	SchemaId        string `json:"schema_id,omitempty"`
-	IssuerDid       string `json:"issuer_did,omitempty"`
-	CredDefId       string `json:"cred_def_id,omitempty"`
+	SchemaID        string `json:"schema_id,omitempty"`
+	IssuerDID       string `json:"issuer_did,omitempty"`
+	CredDefID       string `json:"cred_def_id,omitempty"`
 }
 
+// CredentialProposal contains data for rfc0592 indy cred proposal.
 type CredentialProposal struct {
-	SchemaIssuerDid DID
+	SchemaIssuerDID DID
 	SchemaName      string
 	SchemaVersion   string
-	SchemaId        SchemaID
-	IssuerDid       DID
-	CredDefId       CredDefID
+	SchemaID        SchemaID
+	IssuerDID       DID
+	CredDefID       CredDefID
 }
 
 // ParseCredentialProposal parses CredentialProposal from base64 rfc0592 indy cred-filter.
@@ -58,12 +59,12 @@ func ParseCredentialProposal(base64Data string) (*CredentialProposal, error) {
 
 func newProposal(raw *rawProposal) (*CredentialProposal, error) {
 	return &CredentialProposal{
-		SchemaIssuerDid: DID(raw.SchemaIssuerDid),
+		SchemaIssuerDID: DID(raw.SchemaIssuerDID),
 		SchemaName:      raw.SchemaName,
 		SchemaVersion:   raw.SchemaVersion,
-		SchemaId:        SchemaID(raw.SchemaId),
-		IssuerDid:       DID(raw.IssuerDid),
-		CredDefId:       CredDefID(raw.CredDefId),
+		SchemaID:        SchemaID(raw.SchemaID),
+		IssuerDID:       DID(raw.IssuerDID),
+		CredDefID:       CredDefID(raw.CredDefID),
 	}, nil
 }
 
